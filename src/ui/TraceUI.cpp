@@ -75,7 +75,7 @@ void TraceUI::cb_exit2(Fl_Widget* o, void* v)
 
 void TraceUI::cb_about(Fl_Menu_* o, void* v) 
 {
-	fl_message("RayTracer Project, FLTK version for CS 341 Spring 2002. Latest modifications by Jeff Maurer, jmaurer@cs.washington.edu");
+	fl_message("RayTracer Project, FLTK version for CS 4411 Fall 2015. Latest modifications by Jeff Maurer, jmaurer@cs.washington.edu");
 }
 
 void TraceUI::cb_sizeSlides(Fl_Widget* o, void* v)
@@ -89,7 +89,9 @@ void TraceUI::cb_sizeSlides(Fl_Widget* o, void* v)
 
 void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 {
-	((TraceUI*)(o->user_data()))->m_nDepth=int( ((Fl_Slider *)o)->value() ) ;
+	TraceUI* pUI = (TraceUI*)(o->user_data());
+	pUI->m_nDepth=int( ((Fl_Slider *)o)->value());
+	pUI->raytracer->setDepth(pUI->m_nDepth);
 }
 
 void TraceUI::cb_attenConstSlides(Fl_Widget* o, void* v)

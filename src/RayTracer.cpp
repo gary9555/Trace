@@ -8,6 +8,7 @@
 #include "scene/ray.h"
 #include "fileio/read.h"
 #include "fileio/parse.h"
+#include "ui/TraceUI.h"
 
 // Trace a top-level ray through normalized window coordinates (x,y)
 // through the projection plane, and out into the scene.  All we do is
@@ -17,7 +18,7 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 ).clamp();   // clamp(): clamps the value to go between (0,1)
+	return traceRay( scene, r, vec3f(1.0,1.0,1.0), m_nDepth ).clamp();   // clamp(): clamps the value to go between (0,1)
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
@@ -57,12 +58,25 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		//		I=I+material.Kt*traceRay(scene, Q, T)
 		// endif
 		// return I
-
-
+		
+		
 		const Material& m = i.getMaterial();
-		return m.shade(scene, r, i);
+		vec3f intensity=m.shade(scene, r, i);
+
+		if (depth == 0)
+			return intensity;
+		
+		vec3f L = -r.getDirection().normalize();
+		vec3f R = 2 * i.N * (i.N.dot(L)) - L;
+		vec3f I=traceRay(scene, ray(r.at(i.t),R), thresh, depth-1);
+		for (int i = 0; i < 3; i++)
+			intensity[i] += m.kr[i] * I[i];
+
+		return intensity;
 	
 	} else {
+		// can implement texture background here
+
 		// No intersection.  This ray travels to infinity, so we color
 		// it according to the background color, which in this (simple) case
 		// is just black.
@@ -78,6 +92,7 @@ RayTracer::RayTracer()
 	scene = NULL;
 
 	m_bSceneLoaded = false;
+	m_nDepth = 0;
 }
 
 
