@@ -17,20 +17,38 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 
 	//return false;
 
-	BoundingBox localbounds = ComputeLocalBoundingBox();
-	double tMin = 1.0;
-	double tMax = 1.0;
-	bool booli = localbounds.intersect(r, tMin, tMax);
-	if (booli == 1)
+	BoundingBox localbounds;
+	localbounds.max = vec3f(0.5, 0.5, 0.5);
+	localbounds.min = vec3f(-0.5, -0.5, -0.5);
+
+	double tMin;
+	double tMax;
+	
+	if (localbounds.intersect(r, tMin, tMax))
 	{
 		i.obj = this;
 		i.t = tMin;
-		if (r.at(tMin)[0] == 0.5){ i.N = vec3f(1.0, 0.0, 0.0); }
-		else if (r.at(tMin)[0] == -0.5){ i.N = vec3f(-1.0, 0.0, 0.0); }
-		else if (r.at(tMin)[1] == 0.5){ i.N = vec3f(0.0, 1.0, 0.0); }
-		else if (r.at(tMin)[1] == -0.5){ i.N = vec3f(0.0, -1.0, 0.0); }
-		else if (r.at(tMin)[2] == 0.5){ i.N = vec3f(0.0, 0.0, 1.0); }
-		else if (r.at(tMin)[2] == -0.5){ i.N = vec3f(0.0, 0.0, -1.0); }
+		if (r.at(tMin)[0] == 0.5){ 
+			i.N = vec3f(1.0, 0.0, 0.0); 
+		}
+		else if (r.at(tMin)[0] == -0.5){
+			i.N = vec3f(-1.0, 0.0, 0.0); 
+		}
+		else if (r.at(tMin)[1] == 0.5){ 
+			i.N = vec3f(0.0, 1.0, 0.0); 
+		}
+		else if (r.at(tMin)[1] == -0.5){ 
+			i.N = vec3f(0.0, -1.0, 0.0); 
+		}
+		else if (r.at(tMin)[2] == 0.5){
+			i.N = vec3f(0.0, 0.0, 1.0); 
+		}
+		else if (r.at(tMin)[2] == -0.5){ 
+			i.N = vec3f(0.0, 0.0, -1.0); 
+		}
+		else;
+
+		return true;
 	}
-	return booli;
+	return false;
 }

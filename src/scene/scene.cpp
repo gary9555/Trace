@@ -45,7 +45,7 @@ bool BoundingBox::intersect(const ray& r, double& tMin, double& tMax) const
 		double vd = Rd[currentaxis];
 		
 		// if the ray is parallel to the face's plane (=0.0)
-		if( vd == 0.0 )
+		if( vd < RAY_EPSILON && vd > -RAY_EPSILON )
 			continue;
 
 		double v1 = min[currentaxis] - R0[currentaxis];
