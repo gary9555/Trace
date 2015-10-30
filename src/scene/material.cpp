@@ -18,5 +18,15 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
     // You will need to call both distanceAttenuation() and shadowAttenuation()
     // somewhere in your code in order to compute shadows and light falloff.
 
+	// --------------------------------------- //
+	// -------Pseudocode implementation------- //
+	// --------------------------------------- //
+	// I = I+ material.Ke+ material.Ka*scene->Ia
+	// for each light source l do
+	//		atten=l->distanceAttenuation()*l->shadowAttenuation()
+	//		I = I + atten*(diffuseTerm + specTerm)
+	// end for
+	// return I
+
 	return kd;
 }

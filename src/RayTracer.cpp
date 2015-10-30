@@ -17,7 +17,7 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 ).clamp();
+	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 ).clamp();   // clamp(): clamps the value to go between (0,1)
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
@@ -38,6 +38,26 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// Instead of just returning the result of shade(), add some
 		// more steps: add in the contributions from reflected and refracted
 		// rays.
+		
+		// --------------------------------------- //
+		// -------Pseudocode implementation------- //
+		// --------------------------------------- //
+		// Q <- ray(p,d) evaluated at t
+		// I=shade()
+		// R=reflectDirection()
+		// I= I+material.Kr*traceRay(scene, Q, R)
+		// if (ray is entering object)
+		//		n_i=index_of_air
+		//		n_t=material.index
+		// else
+		//		n_i=material.index
+		//		n_t=index_of_air
+		// if (notTIR())
+		//		T=refractDirection()
+		//		I=I+material.Kt*traceRay(scene, Q, T)
+		// endif
+		// return I
+
 
 		const Material& m = i.getMaterial();
 		return m.shade(scene, r, i);
@@ -157,6 +177,7 @@ void RayTracer::tracePixel( int i, int j )
 
 	unsigned char *pixel = buffer + ( i + j * buffer_width ) * 3;
 
+	// write the rgb values into the raytracer buffer
 	pixel[0] = (int)( 255.0 * col[0]);
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);

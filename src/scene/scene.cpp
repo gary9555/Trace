@@ -1,5 +1,6 @@
 #include <cmath>
-
+#include <FL/fl_ask.h>
+#include <iostream>
 #include "scene.h"
 #include "light.h"
 #include "../ui/TraceUI.h"
@@ -182,7 +183,7 @@ void Scene::initScene()
 		if( (*j)->hasBoundingBoxCapability() )
 		{
 			boundedobjects.push_back(*j);
-
+			cout << "bounded" << endl;
 			// widen the scene's bounding box, if necessary
 			if (first_boundedobject) {
 				sceneBounds = (*j)->getBoundingBox();
@@ -195,7 +196,9 @@ void Scene::initScene()
 				sceneBounds.min = minimum(sceneBounds.min, b.min);
 			}
 		}
-		else
+		else{
 			nonboundedobjects.push_back(*j);
+			cout << "not bounded" << endl;
+		}
 	}
 }
