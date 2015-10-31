@@ -48,7 +48,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 		//N*L
 		vec3f L = (*ii)->getDirection(r.at(i.t));
-		double NdotL = i.N.dot(L);
+		double NdotL = i.N.normalize().dot(L);
 		if (NdotL < 0.0){ NdotL = 0.0; }
 
 		//I*Kd(N*L) (note that here I*Kd returns a vec3f type not a double type like a dot product)
