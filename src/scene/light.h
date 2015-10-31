@@ -3,6 +3,8 @@
 
 #include "scene.h"
 
+enum lighttype { DIRECTIONALLIGHT, POINTLIGHT, AMBIENTLIGHT };
+
 class Light
 	: public SceneElement
 {
@@ -11,12 +13,15 @@ public:
 	virtual double distanceAttenuation( const vec3f& P ) const = 0;
 	virtual vec3f getColor( const vec3f& P ) const = 0;
 	virtual vec3f getDirection( const vec3f& P ) const = 0;
+	lighttype	type;
+
 
 protected:
 	Light( Scene *scene, const vec3f& col )
-		: SceneElement( scene ), color( col ) {}
+		: SceneElement( scene ), color( col ), type(DIRECTIONALLIGHT) {}
 
 	vec3f 		color;
+
 };
 
 class DirectionalLight
@@ -24,7 +29,9 @@ class DirectionalLight
 {
 public:
 	DirectionalLight( Scene *scene, const vec3f& orien, const vec3f& color )
-		: Light( scene, color ), orientation( orien ) {}
+		: Light(scene, color), orientation(orien) {
+		type = DIRECTIONALLIGHT;
+	}
 	virtual vec3f shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
@@ -38,8 +45,10 @@ class PointLight
 	: public Light
 {
 public:
-	PointLight( Scene *scene, const vec3f& pos, const vec3f& color )
-		: Light( scene, color ), position( pos ) {}
+	PointLight( Scene *scene, const vec3f& pos, const vec3f& color)
+		: Light(scene, color), position(pos){
+		type = POINTLIGHT;
+	}
 	virtual vec3f shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
