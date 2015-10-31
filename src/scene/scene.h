@@ -275,6 +275,9 @@ public:
 
 	list<Light*>::const_iterator beginLights() const { return lights.begin(); }
 	list<Light*>::const_iterator endLights() const { return lights.end(); }
+
+	list<AmbientLight*>::const_iterator beginAmbientLights() const { return ambientLights.begin(); }
+	list<AmbientLight*>::const_iterator endAmbientLights() const { return ambientLights.end(); }
         
 	Camera *getCamera() { return &camera; }
 

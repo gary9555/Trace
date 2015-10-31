@@ -63,7 +63,7 @@ class AmbientLight
 
 public:
 	AmbientLight(Scene *scene, const vec3f& color) :SceneElement(scene),color(color){ }
-	virtual vec3f getColor(const vec3f& P) const{ return color; };
+	virtual vec3f getColor() const{ return color; };
 
 private:
 	vec3f color;

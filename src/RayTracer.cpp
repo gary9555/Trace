@@ -67,7 +67,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			return intensity;
 		
 		vec3f L = -r.getDirection().normalize();
-		vec3f R = 2 * i.N * (i.N.dot(L)) - L;
+		vec3f R = 2 * i.N.normalize() * (i.N.normalize().dot(L)) - L;
 		vec3f I=traceRay(scene, ray(r.at(i.t),R), thresh, depth-1);
 		for (int i = 0; i < 3; i++)
 			intensity[i] += m.kr[i] * I[i];
