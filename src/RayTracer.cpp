@@ -76,6 +76,9 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		for (int i = 0; i < 3; i++)
 			intensity[i] += m.kr[i] * I[i];
 
+		for (int i = 0; i < 3; i++)
+			intensity[i] = intensity[i]>1 ? 1 : intensity[i];
+
 		return intensity;
 	
 	} else {

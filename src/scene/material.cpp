@@ -66,19 +66,16 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 				(*ii)->getColor(r.at(i.t))[1] * ks[1], (*ii)->getColor(r.at(i.t))[2] * ks[2]) * VdotR;
 
 			//color before attenuation
-			vec3f ColorBeforeAttenuation = diffuse + specular;
+			Intensity = diffuse + specular;
 
 			//distance attenuation
-			double disatten = 1.0;
-			if ((*ii)->distanceAttenuation(r.at(i.t)) < 1.0) {
-				disatten = (*ii)->distanceAttenuation(r.at(i.t));
-			}
-
-			Intensity += ColorBeforeAttenuation * disatten;
+			double disatten = (*ii)->distanceAttenuation(r.at(i.t));
+			Intensity *= disatten;
 		}
 		
 		
 	}
+	
 
 	return Intensity;
 	//return kd;

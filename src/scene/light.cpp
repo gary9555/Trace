@@ -1,5 +1,5 @@
 #include <cmath>
-
+#include <iostream>
 #include "light.h"
 
 double DirectionalLight::distanceAttenuation( const vec3f& P ) const
@@ -14,6 +14,7 @@ vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
 {
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
+
     return vec3f(1,1,1);
 }
 
@@ -35,7 +36,10 @@ double PointLight::distanceAttenuation( const vec3f& P ) const
 	// You'll need to modify this method to attenuate the intensity 
 	// of the light based on the distance between the source and the 
 	// point P.  For now, I assume no attenuation and just return 1.0
-	return 1.0;
+	double dist = (position - P).length();
+	double distatten = 1 / (a + b*dist + c*dist*dist);
+
+	return distatten>1 ? 1:distatten;
 }
 
 vec3f PointLight::getColor( const vec3f& P ) const
