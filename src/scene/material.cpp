@@ -38,8 +38,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	{
 
 		//if the light is ambient light, it will simply contribute to the total intensity
-		if (ii._Ptr->_Myval->type == AMBIENTLIGHT){ Intensity += vec3f(ii._Ptr->_Myval->getColor(r.at(i.t))[0]*ka[0],
-			ii._Ptr->_Myval->getColor(r.at(i.t))[1]*ka[1], ii._Ptr->_Myval->getColor(r.at(i.t))[2]*ka[2]); }
+		if ((*ii)->type == AMBIENTLIGHT){ Intensity += vec3f((*ii)->getColor(r.at(i.t))[0]*ka[0],
+			(*ii)->getColor(r.at(i.t))[1]*ka[1], (*ii)->getColor(r.at(i.t))[2]*ka[2]); }
 		
 		//if the light is directional light or point light
 		else
@@ -47,13 +47,13 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			NumberOfDirectionalAndPoint += 1;
 
 			//N*L
-			vec3f L = ii._Ptr->_Myval->getDirection(r.at(i.t));
+			vec3f L = (*ii)->getDirection(r.at(i.t));
 			double NdotL = i.N*L;
 			if (NdotL < 0.0){ NdotL = 0.0; }
 
 			//I*Kd(N*L) (note that here I*Kd returns a vec3f type not a double type like a dot product)
-			vec3f diffuse = vec3f(ii._Ptr->_Myval->getColor(r.at(i.t))[0] * kd[0],
-				ii._Ptr->_Myval->getColor(r.at(i.t))[1] * kd[1], ii._Ptr->_Myval->getColor(r.at(i.t))[2] * kd[2]) * NdotL;
+			vec3f diffuse = vec3f((*ii)->getColor(r.at(i.t))[0] * kd[0],
+				(*ii)->getColor(r.at(i.t))[1] * kd[1], (*ii)->getColor(r.at(i.t))[2] * kd[2]) * NdotL;
 
 			//V*R
 			vec3f V = -r.getDirection();
@@ -62,16 +62,16 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			if (VdotR < 0.0){ VdotR = 0.0; }
 
 			//I*Ks(V*R)
-			vec3f specular = vec3f(ii._Ptr->_Myval->getColor(r.at(i.t))[0] * ks[0],
-				ii._Ptr->_Myval->getColor(r.at(i.t))[1] * ks[1], ii._Ptr->_Myval->getColor(r.at(i.t))[2] * ks[2]) * VdotR;
+			vec3f specular = vec3f((*ii)->getColor(r.at(i.t))[0] * ks[0],
+				(*ii)->getColor(r.at(i.t))[1] * ks[1], (*ii)->getColor(r.at(i.t))[2] * ks[2]) * VdotR;
 
 			//color before attenuation
 			vec3f ColorBeforeAttenuation = diffuse + specular;
 
 			//distance attenuation
 			double disatten = 1.0;
-			if (ii._Ptr->_Myval->distanceAttenuation(r.at(i.t)) < 1.0) {
-				disatten = ii._Ptr->_Myval->distanceAttenuation(r.at(i.t));
+			if ((*ii)->distanceAttenuation(r.at(i.t)) < 1.0) {
+				disatten = (*ii)->distanceAttenuation(r.at(i.t));
 			}
 
 			SumOfDirectionalAndPoint += ColorBeforeAttenuation * disatten;
@@ -82,5 +82,5 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	}
 
 	
-
+	//return kd;
 }
