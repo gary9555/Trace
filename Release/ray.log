@@ -1,4 +1,4 @@
-﻿Build started 2015/10/31 18:54:29.
+﻿Build started 2015/10/31 21:38:52.
      1>Project "D:\Documents\Academics\COMP4411\RaySkelF14\ray.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Ilocal\include /Zi /nologo /W3 /WX- /O2 /Ob2 /Oy- /D NDEBUG /D _WINDOWS /D WIN32 /D SAMPLE_SOLUTION /D _VC80_UPGRADE=0x0600 /D _MBCS /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo".\Release/" /Fd".\Release/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\scene\material.cpp
@@ -30,4 +30,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.37
+Time Elapsed 00:00:03.44

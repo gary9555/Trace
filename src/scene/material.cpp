@@ -74,8 +74,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			disatten = (*ii)->distanceAttenuation(r.at(i.t));
 		}
 
-		SumOfDirectionalAndPoint += ColorBeforeAttenuation * disatten;
-		Intensity += SumOfDirectionalAndPoint / NumberOfDirectionalAndPoint;
+		Intensity += ColorBeforeAttenuation * disatten;
+		
 		
 	}
 

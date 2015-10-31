@@ -28,22 +28,22 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 	{
 		i.obj = this;
 		i.t = tMin;
-		if (r.at(tMin)[0] == 0.5){ 
+		if (r.at(tMin)[0] - 0.5<RAY_EPSILON && r.at(tMin)[0] - 0.5>-RAY_EPSILON){
 			i.N = vec3f(1.0, 0.0, 0.0); 
 		}
-		else if (r.at(tMin)[0] == -0.5){
+		else if (r.at(tMin)[0] + 0.5<RAY_EPSILON && r.at(tMin)[0] + 0.5>-RAY_EPSILON){
 			i.N = vec3f(-1.0, 0.0, 0.0); 
 		}
-		else if (r.at(tMin)[1] == 0.5){ 
+		else if (r.at(tMin)[1] - 0.5<RAY_EPSILON && r.at(tMin)[1] - 0.5>-RAY_EPSILON){
 			i.N = vec3f(0.0, 1.0, 0.0); 
 		}
-		else if (r.at(tMin)[1] == -0.5){ 
+		else if (r.at(tMin)[1] + 0.5<RAY_EPSILON && r.at(tMin)[1] + 0.5>-RAY_EPSILON){
 			i.N = vec3f(0.0, -1.0, 0.0); 
 		}
-		else if (r.at(tMin)[2] == 0.5){
+		else if (r.at(tMin)[2] - 0.5<RAY_EPSILON && r.at(tMin)[2] - 0.5>-RAY_EPSILON){
 			i.N = vec3f(0.0, 0.0, 1.0); 
 		}
-		else if (r.at(tMin)[2] == -0.5){ 
+		else if (r.at(tMin)[2] + 0.5<RAY_EPSILON && r.at(tMin)[2] + 0.5>-RAY_EPSILON){
 			i.N = vec3f(0.0, 0.0, -1.0); 
 		}
 		else;
