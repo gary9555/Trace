@@ -1,9 +1,8 @@
-﻿Build started 2015/10/31 6:36:33.
+﻿Build started 2015/10/31 17:22:43.
      1>Project "D:\Documents\Academics\COMP4411\RaySkelF14\ray.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Ilocal\include /Zi /nologo /W3 /WX- /O2 /Ob2 /Oy- /D NDEBUG /D _WINDOWS /D WIN32 /D SAMPLE_SOLUTION /D _VC80_UPGRADE=0x0600 /D _MBCS /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo".\Release/" /Fd".\Release/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\RayTracer.cpp
-         RayTracer.cpp
-     1>d:\documents\academics\comp4411\rayskelf14\src\fileio/parse.h(180): warning C4018: '<' : signed/unsigned mismatch
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Ilocal\include /Zi /nologo /W3 /WX- /O2 /Ob2 /Oy- /D NDEBUG /D _WINDOWS /D WIN32 /D SAMPLE_SOLUTION /D _VC80_UPGRADE=0x0600 /D _MBCS /GF /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo".\Release/" /Fd".\Release/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\scene\material.cpp
+         material.cpp
        Link:
          D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\Release/ray.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:local\lib fltkd.lib wsock32.lib opengl32.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\Release\ray.pdb" /MAP:".\Release/ray.map" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE:NO /IMPLIB:".\Release\ray.lib" /MACHINE:X86 /SAFESEH:NO .\Release/getopt.obj
          .\Release/main.obj
@@ -31,4 +30,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.57
+Time Elapsed 00:00:04.58

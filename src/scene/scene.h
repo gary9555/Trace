@@ -19,6 +19,7 @@ using namespace std;
 
 class Light;
 class Scene;
+class AmbientLight;
 
 class SceneElement
 {
@@ -260,7 +261,14 @@ public:
 		objects.push_back( obj );
 	}
 	void add( Light* light )
-	{ lights.push_back( light ); }
+	{ 
+		lights.push_back( light );
+	}
+	void add(AmbientLight* light)
+	{
+		ambientLights.push_back(light);
+	}
+
 
 	bool intersect( const ray& r, isect& i ) const;
 	void initScene();
@@ -277,6 +285,7 @@ private:
 	list<Geometry*> nonboundedobjects;
 	list<Geometry*> boundedobjects;
     list<Light*> lights;
+	list<AmbientLight*> ambientLights;
     Camera camera;
 	
 	// Each object in the scene, provided that it has hasBoundingBoxCapability(),

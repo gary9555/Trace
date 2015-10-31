@@ -28,5 +28,6 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	// end for
 	// return I
 
+	
 	return kd;
 }

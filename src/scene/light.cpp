@@ -5,6 +5,7 @@
 double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 {
 	// distance to light is infinite, so f(di) goes to 0.  Return 1.
+
 	return 1.0;
 }
 
@@ -56,8 +57,4 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
     return vec3f(1,1,1);
 }
 
-vec3f AmbientLight::getColor(const vec3f& P) const
-{
-	// Color doesn't depend on P 
-	return color;
-}
+
