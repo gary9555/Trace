@@ -28,8 +28,8 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 {
 	isect i;
 
-	if( scene->intersect( r, i ) ) {
-		
+	if (scene->intersect(r, i)) {
+
 		// --------------------------------------- //
 		// -------Pseudocode implementation------- //
 		// --------------------------------------- //
@@ -48,9 +48,12 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		//		I=I+material.Kt*traceRay(scene, Q, T)
 		// endif
 		// return I
-			
+
+		double n_i;
+		double n_t;
+
 		const Material& m = i.getMaterial();
-		vec3f intensity=m.shade(scene, r, i);
+		vec3f intensity = m.shade(scene, r, i);
 		intensity += m.ke;
 		for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
 			intensity += vec3f((*jj)->getColor()[0] * m.ka[0], (*jj)->getColor()[1] * m.ka[1], (*jj)->getColor()[2] * m.ka[2]);
@@ -62,13 +65,29 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		if (depth == 0)
 			return intensity;
-		
+
 		vec3f L = -r.getDirection();
 		vec3f R = 2 * i.N.normalize() * (i.N.normalize().dot(L)) - L;
-		vec3f I=traceRay(scene, ray(r.at(i.t),R), thresh, depth-1);
+		vec3f I = traceRay(scene, ray(r.at(i.t), R), thresh, depth - 1);
 		for (int i = 0; i < 3; i++)
 			intensity[i] += m.kr[i] * I[i];
+		/*
+		if (i.N.dot(-L) < 0){
+			n_i = 1.0;
+			n_t = m.index;
+		}
+		else{
+			n_i = m.index;
+			n_t = 1.0;
+		}
+		
+		if (notTIR()){
+			vec3f T = refractDir();
+			vec3f refractIntensity = traceRay(scene, ray(r.at(i.t), T), thresh, depth - 1);
+			intensity += vec3f(m.kt[0] * refractIntensity[0], m.kt[1] * refractIntensity[1], m.kt[2] * refractIntensity[2]);
+		}
 
+		*/
 		for (int i = 0; i < 3; i++)
 			intensity[i] = intensity[i]>1 ? 1 : intensity[i];
 

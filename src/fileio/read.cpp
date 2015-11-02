@@ -307,7 +307,9 @@ static void processGeometry( string name, Obj *child, Scene *scene,
 		} else if( name == "box" ) {
 			obj = new Box( scene, mat );
 		} else if( name == "cylinder" ) {
-			obj = new Cylinder( scene, mat );
+			bool capped = true;
+			maybeExtractField(child, "capped", capped);
+			obj = new Cylinder( scene, mat, capped);
 		} else if( name == "cone" ) {
 			double height = 1.0;
 			double bottom_radius = 1.0;
@@ -530,21 +532,29 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 			throw ParseError("No info for point_light");
 		}
 
+		double a = 0.0, b = 0.0, c = 0.0;
+		maybeExtractField(child, "constant_attenuation_coeff", a);
+		maybeExtractField(child, "linear_attenuation_coeff", b);
+		maybeExtractField(child, "quadratic_attenuation_coeff", c);
+
 		scene->add(new PointLight(scene,
 			tupleToVec(getField(child, "position")),
-			tupleToVec(getColorField(child)), getField(child, "constant_attenuation_coeff")->getScalar(),
-			getField(child, "linear_attenuation_coeff")->getScalar(), getField(child, "quadratic_attenuation_coeff")->getScalar()));
+			tupleToVec(getColorField(child)), a, b, c));
 	}
 	else if (name == "spot_light") {
 		if (child == NULL) {
 			throw ParseError("No info for spot_light");
 		}
 
+		double a = 0.0, b = 0.0, c = 0.0;
+		maybeExtractField(child, "constant_attenuation_coeff", a);
+		maybeExtractField(child, "linear_attenuation_coeff", b);
+		maybeExtractField(child, "quadratic_attenuation_coeff", c);
+
 		scene->add(new SpotLight(scene,
 			tupleToVec(getField(child, "position")),
-			tupleToVec(getColorField(child)), getField(child, "constant_attenuation_coeff")->getScalar(),
-			getField(child, "linear_attenuation_coeff")->getScalar(), getField(child, "quadratic_attenuation_coeff")->getScalar(),
-			tupleToVec(getField(child, "coneboundary")), tupleToVec(getField(child, "conedirection"))));
+			tupleToVec(getColorField(child)), a,
+			b, c, tupleToVec(getField(child, "coneboundary")), tupleToVec(getField(child, "conedirection"))));
 	}
 
 	 else if (name == "ambient_light"){
