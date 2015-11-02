@@ -1,6 +1,7 @@
 #include "ray.h"
 #include "material.h"
 #include "light.h"
+#include <cmath>
 
 // Apply the phong model to this point on the surface of the object, returning
 // the color of that point.
@@ -62,7 +63,7 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 
 			//I*Ks(V*R)
 			vec3f specular = vec3f((*ii)->getColor(r.at(i.t))[0] * ks[0],
-				(*ii)->getColor(r.at(i.t))[1] * ks[1], (*ii)->getColor(r.at(i.t))[2] * ks[2]) * VdotR;
+				(*ii)->getColor(r.at(i.t))[1] * ks[1], (*ii)->getColor(r.at(i.t))[2] * ks[2]) * pow(VdotR, shininess*128);
 
 			//color before attenuation
 			vec3f ColorBeforeAttenuation = diffuse + specular;
