@@ -307,9 +307,7 @@ static void processGeometry( string name, Obj *child, Scene *scene,
 		} else if( name == "box" ) {
 			obj = new Box( scene, mat );
 		} else if( name == "cylinder" ) {
-			bool capped = true;
-			maybeExtractField(child, "capped", capped);
-			obj = new Cylinder( scene, mat, capped);
+			obj = new Cylinder( scene, mat );
 		} else if( name == "cone" ) {
 			double height = 1.0;
 			double bottom_radius = 1.0;
@@ -526,33 +524,30 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 		scene->add( new DirectionalLight( scene, 
 			tupleToVec( getField( child, "direction" ) ).normalize(),
 			tupleToVec( getColorField( child ) ) ) );
-	} else if( name == "point_light" ) {
-		if( child == NULL ) {
-			throw ParseError( "No info for point_light" );
+	}
+	else if (name == "point_light") {
+		if (child == NULL) {
+			throw ParseError("No info for point_light");
 		}
 
-		double a, b, c;
-		if (hasField(child, "constant_attenuation_coeff"))
-			a = getField(child, "constant_attenuation_coeff")->getScalar();
-		else
-			a = 0;
+		scene->add(new PointLight(scene,
+			tupleToVec(getField(child, "position")),
+			tupleToVec(getColorField(child)), getField(child, "constant_attenuation_coeff")->getScalar(),
+			getField(child, "linear_attenuation_coeff")->getScalar(), getField(child, "quadratic_attenuation_coeff")->getScalar()));
+	}
+	else if (name == "spot_light") {
+		if (child == NULL) {
+			throw ParseError("No info for spot_light");
+		}
 
-		if (hasField(child, "linear_attenuation_coeff"))
-			b = getField(child, "linear_attenuation_coeff")->getScalar();
-		else
-			b = 0;
+		scene->add(new SpotLight(scene,
+			tupleToVec(getField(child, "position")),
+			tupleToVec(getColorField(child)), getField(child, "constant_attenuation_coeff")->getScalar(),
+			getField(child, "linear_attenuation_coeff")->getScalar(), getField(child, "quadratic_attenuation_coeff")->getScalar(),
+			tupleToVec(getField(child, "coneboundary")), tupleToVec(getField(child, "conedirection"))));
+	}
 
-		if (hasField(child, "quadratic_attenuation_coeff"))
-			c = getField(child, "quadratic_attenuation_coeff")->getScalar();
-		else
-			c = 0;
-
-
-		scene->add( new PointLight( scene, 
-			tupleToVec( getField( child, "position" ) ),
-			tupleToVec(getColorField(child)), a,
-			b, c));
-	} else if (name == "ambient_light"){
+	 else if (name == "ambient_light"){
 		if (child == NULL) {
 			throw ParseError("No info for ambient_light");
 		}
