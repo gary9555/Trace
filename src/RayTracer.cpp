@@ -62,6 +62,10 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		
 		const Material& m = i.getMaterial();
 		vec3f intensity=m.shade(scene, r, i);
+		intensity += m.ke;
+		for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
+			intensity += vec3f((*jj)->getColor()[0] * m.ka[0], (*jj)->getColor()[1] * m.ka[1], (*jj)->getColor()[2] * m.ka[2]);
+		}
 
 		for (int i = 0; i < 3; i++)
 			if (intensity[i]>1)

@@ -4,7 +4,7 @@
 
 // Apply the phong model to this point on the surface of the object, returning
 // the color of that point.
-vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
+vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 {
 	// YOUR CODE HERE
 
@@ -15,8 +15,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 	// Your mission is to fill in this method with the rest of the phong
 	// shading model, including the contributions of all the light sources.
-    // You will need to call both distanceAttenuation() and shadowAttenuation()
-    // somewhere in your code in order to compute shadows and light falloff.
+	// You will need to call both distanceAttenuation() and shadowAttenuation()
+	// somewhere in your code in order to compute shadows and light falloff.
 
 	// --------------------------------------- //
 	// -------Pseudocode implementation------- //
@@ -30,14 +30,13 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 
 	//initiallize the parameters
 	vec3f Intensity;
-	vec3f SumOfDirectionalAndPoint = vec3f(0.0, 0.0, 0.0);
 
 	//iteration in scene.lights
 
 	// ambient lights
-	for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
-		Intensity += vec3f((*jj)->getColor()[0] * ka[0], (*jj)->getColor()[1] * ka[1], (*jj)->getColor()[2] * ka[2]);
-	}
+	//for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
+		//Intensity += vec3f((*jj)->getColor()[0] * ka[0], (*jj)->getColor()[1] * ka[1], (*jj)->getColor()[2] * ka[2]);
+	//}
 
 	for (list<Light*>::const_iterator ii = scene->beginLights(); ii != scene->endLights(); ii++)
 	{
@@ -66,16 +65,19 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 				(*ii)->getColor(r.at(i.t))[1] * ks[1], (*ii)->getColor(r.at(i.t))[2] * ks[2]) * VdotR;
 
 			//color before attenuation
-			Intensity = diffuse + specular;
+			vec3f ColorBeforeAttenuation = diffuse + specular;
 
 			//distance attenuation
-			double disatten = (*ii)->distanceAttenuation(r.at(i.t));
-			Intensity *= disatten;
+			double disatten = 1.0;
+			if ((*ii)->distanceAttenuation(r.at(i.t)) < 1.0) {
+				disatten = (*ii)->distanceAttenuation(r.at(i.t));
+			}
+
+			Intensity += ColorBeforeAttenuation * disatten;
 		}
-		
-		
+
+
 	}
-	
 
 	return Intensity;
 	//return kd;
