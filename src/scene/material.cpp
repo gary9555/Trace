@@ -35,15 +35,13 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 	//iteration in scene.lights
 
 	// ambient lights
-	//for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
-		//Intensity += vec3f((*jj)->getColor()[0] * ka[0], (*jj)->getColor()[1] * ka[1], (*jj)->getColor()[2] * ka[2]);
-	//}
+	for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
+		Intensity += vec3f((*jj)->getColor()[0] * ka[0], (*jj)->getColor()[1] * ka[1], (*jj)->getColor()[2] * ka[2]);
+	}
 
 	for (list<Light*>::const_iterator ii = scene->beginLights(); ii != scene->endLights(); ii++)
 	{
 		isect is;
-		if (scene->intersect(ray(r.at(i.t), (*ii)->getDirection(r.at(i.t))), is)){}
-		else{
 			// directional light or point light
 
 			//N*L
@@ -79,7 +77,7 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 			}
 
 			Intensity += ColorBeforeAttenuation * disatten;
-		}
+		
 
 
 	}
