@@ -78,10 +78,13 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		if (NdotL > 0){
 			vec3f R = 2 * i.N.normalize() * (NdotL)-L;
 			vec3f I = traceRay(scene, ray(r.at(i.t), R), thresh, depth - 1);
-			for (int i = 0; i < 3; i++)
-				intensity[i] += m.kr[i] * I[i];
+			intensity += prod(m.kr, I);
 		}
+
+
 		// dealing with refraction
+		vec3f I = -r.getDirection().normalize();
+		vec3f normal = i.N;
 		if (NdotL > 0){
 			n_i = 1.000293;
 			n_t = m.index;
@@ -89,13 +92,15 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		else{
 			n_i = m.index;
 			n_t = 1.000293;
+			normal = -normal;
 		}
+		double NdotI = normal.dot(I);
 		double n_r = n_i / n_t;
 		
 		if ((1 - n_r*n_r*(1 - NdotL*NdotL))>0){ // check if it is TIR
-			vec3f T = (n_r*(NdotL)-sqrt(1 - n_r*n_r*(1 - NdotL*NdotL)))*i.N - n_r*L;
-			vec3f refractIntensity = traceRay(scene, ray(r.at(i.t), T), thresh, depth - 1);
-			intensity += vec3f(m.kt[0] * refractIntensity[0], m.kt[1] * refractIntensity[1], m.kt[2] * refractIntensity[2]);
+			vec3f T = (n_r*(NdotI)-sqrt(1 - n_r*n_r*(1 - NdotI*NdotI)))*normal - n_r*I;
+			vec3f refractIntensity = traceRay(scene, ray(r.at(i.t), T.normalize()), thresh, depth - 1);
+			intensity += prod(m.kt, refractIntensity);
 		}
 
 

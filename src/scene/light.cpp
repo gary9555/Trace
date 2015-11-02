@@ -11,12 +11,24 @@ double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 
 vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
 {
-    // YOUR CODE HERE:
-    // You should implement shadow-handling code here.
+	vec3f dir = getDirection(P).normalize();
+	ray shadowRay = ray(P, dir);
 	isect i;
-	if (scene->intersect(ray(P, getDirection(P)), i)){ return vec3f(0.0, 0.0, 0.0); }
+	vec3f shadowatten(1.0, 1.0, 1.0);
+	bool intersectOtherObject = scene->intersect(shadowRay, i);
+	while (intersectOtherObject) {
 
-    return vec3f(1,1,1);
+		if (i.getMaterial().kt == vec3f(0.0, 0.0, 0.0)){
+			return vec3f(0, 0, 0);
+		}
+		else{
+			shadowatten = prod(shadowatten, i.getMaterial().kt);
+		}
+		shadowRay = ray(shadowRay.at(i.t), dir);
+		intersectOtherObject = scene->intersect(shadowRay, i);
+	}
+
+	return shadowatten;
 }
 
 vec3f DirectionalLight::getColor( const vec3f& P ) const
@@ -88,11 +100,25 @@ vec3f WarnLight::getDirection(const vec3f& P) const
 }
 
 vec3f PointLight::shadowAttenuation(const vec3f& P) const
-{
-    // You should implement shadow-handling code here.
+{	
+	vec3f dir = getDirection(P).normalize();
+	ray shadowRay = ray(P, dir);
 	isect i;
-	if (scene->intersect(ray(P, getDirection(P)), i)){ return vec3f(0.0, 0.0, 0.0); }
-    return vec3f(1,1,1);
+	vec3f shadowatten(1.0, 1.0, 1.0);
+	bool intersectOtherObject = scene->intersect(shadowRay, i);
+	while (intersectOtherObject) {
+		
+		if (i.getMaterial().kt == vec3f(0.0, 0.0, 0.0)){
+			return vec3f(0, 0, 0);
+		}
+		else{
+			shadowatten = prod(shadowatten, i.getMaterial().kt);
+		}
+		shadowRay = ray(shadowRay.at(i.t), dir);
+		intersectOtherObject = scene->intersect(shadowRay, i);
+	}
+
+	return shadowatten;
 }
 
 vec3f SpotLight::shadowAttenuation(const vec3f& P) const

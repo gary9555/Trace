@@ -26,7 +26,7 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 	Intensity += ke;
 	//ambient term
 	for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
-		Intensity += vec3f((*jj)->getColor()[0] * ka[0] * (1 - kt[0]), (*jj)->getColor()[1] * ka[1] * (1 - kt[1]), (*jj)->getColor()[2] * ka[2] * (1 - kt[2]));
+		Intensity += prod(prod(ka, (vec3f(1, 1, 1) - kt)), (*jj)->getColor()); 
 	}
 
 	for (list<Light*>::const_iterator ii = scene->beginLights(); ii != scene->endLights(); ii++)
@@ -40,8 +40,7 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 		if (NdotL < 0.0){ NdotL = 0.0; }
 
 		//I*Kd(N*L) (note that here I*Kd returns a vec3f type not a double type like a dot product)
-		vec3f diffuse = vec3f((*ii)->getColor(r.at(i.t))[0] * kd[0]*(1-kt[0]),
-			(*ii)->getColor(r.at(i.t))[1] * kd[1] * (1 - kt[1]), (*ii)->getColor(r.at(i.t))[2] * kd[2] * (1 - kt[2])) * NdotL;
+		vec3f diffuse = prod(prod(kd, (vec3f(1,1,1) - kt)), (*ii)->getColor(r.at(i.t)))*NdotL;
 
 		//V*R
 		vec3f V = -r.getDirection();
@@ -50,15 +49,13 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 		if (VdotR < 0.0){ VdotR = 0.0; }
 
 		//I*Ks(V*R)
-		vec3f specular = vec3f((*ii)->getColor(r.at(i.t))[0] * ks[0],
-			(*ii)->getColor(r.at(i.t))[1] * ks[1], (*ii)->getColor(r.at(i.t))[2] * ks[2]) * pow(VdotR, shininess*128);
+		vec3f specular = prod((*ii)->getColor(r.at(i.t)), ks)*pow(VdotR, shininess * 128);
 
 		//color before attenuation
 		vec3f ColorBeforeAttenuation = diffuse + specular;
 
 		//shadow attenuation
-		ColorBeforeAttenuation = vec3f(ColorBeforeAttenuation[0] * (*ii)->shadowAttenuation(r.at(i.t))[0],
-			ColorBeforeAttenuation[1] * (*ii)->shadowAttenuation(r.at(i.t))[1], ColorBeforeAttenuation[2] * (*ii)->shadowAttenuation(r.at(i.t))[2]);
+		ColorBeforeAttenuation = prod(ColorBeforeAttenuation, (*ii)->shadowAttenuation(r.at(i.t)));
 
 		//distance attenuation
 		double disatten = 1.0;
@@ -67,6 +64,7 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 		}
 
 		Intensity += ColorBeforeAttenuation * disatten;
+		//Intensity.clamp();
 		
 	}
 
