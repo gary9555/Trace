@@ -1,4 +1,5 @@
 // The main ray tracer.
+#include <cmath>
 
 #include <Fl/fl_ask.h>
 
@@ -9,6 +10,7 @@
 #include "fileio/read.h"
 #include "fileio/parse.h"
 #include "ui/TraceUI.h"
+
 
 // Trace a top-level ray through normalized window coordinates (x,y)
 // through the projection plane, and out into the scene.  All we do is
@@ -54,42 +56,48 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		const Material& m = i.getMaterial();
 		vec3f intensity = m.shade(scene, r, i);
-		intensity += m.ke;
-		for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
-			intensity += vec3f((*jj)->getColor()[0] * m.ka[0], (*jj)->getColor()[1] * m.ka[1], (*jj)->getColor()[2] * m.ka[2]);
-		}
 
-		for (int i = 0; i < 3; i++)
-			if (intensity[i]>1)
-				intensity[i] = 1;
+		// emissive and ambient terms only to be added once in the entire recursion
+		/*if (depth == m_nDepth){
+			// emissive term
+			intensity += m.ke;
+			//ambient term
+			for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
+				intensity += vec3f((*jj)->getColor()[0] * m.ka[0], (*jj)->getColor()[1] * m.ka[1], (*jj)->getColor()[2] * m.ka[2]);
+			}
+		}*/
 
+		// clamp intensity to the threshold if exceeded
+		
 		if (depth == 0)
 			return intensity;
 
-		vec3f L = -r.getDirection();
-		vec3f R = 2 * i.N.normalize() * (i.N.normalize().dot(L)) - L;
-		vec3f I = traceRay(scene, ray(r.at(i.t), R), thresh, depth - 1);
-		for (int i = 0; i < 3; i++)
-			intensity[i] += m.kr[i] * I[i];
-		/*
-		if (i.N.dot(-L) < 0){
-			n_i = 1.0;
+		// dealing with reflection
+		vec3f L = -r.getDirection().normalize();
+		double NdotL = i.N.normalize().dot(L);
+		if (NdotL > 0){
+			vec3f R = 2 * i.N.normalize() * (NdotL)-L;
+			vec3f I = traceRay(scene, ray(r.at(i.t), R), thresh, depth - 1);
+			for (int i = 0; i < 3; i++)
+				intensity[i] += m.kr[i] * I[i];
+		}
+		// dealing with refraction
+		if (NdotL > 0){
+			n_i = 1.000293;
 			n_t = m.index;
 		}
 		else{
 			n_i = m.index;
-			n_t = 1.0;
+			n_t = 1.000293;
 		}
+		double n_r = n_i / n_t;
 		
-		if (notTIR()){
-			vec3f T = refractDir();
+		if ((1 - n_r*n_r*(1 - NdotL*NdotL))>0){ // check if it is TIR
+			vec3f T = (n_r*(NdotL)-sqrt(1 - n_r*n_r*(1 - NdotL*NdotL)))*i.N - n_r*L;
 			vec3f refractIntensity = traceRay(scene, ray(r.at(i.t), T), thresh, depth - 1);
 			intensity += vec3f(m.kt[0] * refractIntensity[0], m.kt[1] * refractIntensity[1], m.kt[2] * refractIntensity[2]);
 		}
 
-		*/
-		for (int i = 0; i < 3; i++)
-			intensity[i] = intensity[i]>1 ? 1 : intensity[i];
 
 		return intensity;
 	

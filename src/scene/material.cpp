@@ -22,7 +22,12 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 
 	//iteration in scene.lights
 
-
+	// emissive term
+	Intensity += ke;
+	//ambient term
+	for (list<AmbientLight*>::const_iterator jj = scene->beginAmbientLights(); jj != scene->endAmbientLights(); jj++){
+		Intensity += vec3f((*jj)->getColor()[0] * ka[0] * (1 - kt[0]), (*jj)->getColor()[1] * ka[1] * (1 - kt[1]), (*jj)->getColor()[2] * ka[2] * (1 - kt[2]));
+	}
 
 	for (list<Light*>::const_iterator ii = scene->beginLights(); ii != scene->endLights(); ii++)
 	{
@@ -35,8 +40,8 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 		if (NdotL < 0.0){ NdotL = 0.0; }
 
 		//I*Kd(N*L) (note that here I*Kd returns a vec3f type not a double type like a dot product)
-		vec3f diffuse = vec3f((*ii)->getColor(r.at(i.t))[0] * kd[0],
-			(*ii)->getColor(r.at(i.t))[1] * kd[1], (*ii)->getColor(r.at(i.t))[2] * kd[2]) * NdotL;
+		vec3f diffuse = vec3f((*ii)->getColor(r.at(i.t))[0] * kd[0]*(1-kt[0]),
+			(*ii)->getColor(r.at(i.t))[1] * kd[1] * (1 - kt[1]), (*ii)->getColor(r.at(i.t))[2] * kd[2] * (1 - kt[2])) * NdotL;
 
 		//V*R
 		vec3f V = -r.getDirection();

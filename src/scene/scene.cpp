@@ -183,7 +183,7 @@ void Scene::initScene()
 		if( (*j)->hasBoundingBoxCapability() )
 		{
 			boundedobjects.push_back(*j);
-			cout << "bounded" << endl;
+			//cout << "bounded" << endl;
 			// widen the scene's bounding box, if necessary
 			if (first_boundedobject) {
 				sceneBounds = (*j)->getBoundingBox();
@@ -198,7 +198,7 @@ void Scene::initScene()
 		}
 		else{
 			nonboundedobjects.push_back(*j);
-			cout << "not bounded" << endl;
+			//cout << "not bounded" << endl;
 		}
 	}
 }
