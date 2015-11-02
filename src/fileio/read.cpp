@@ -556,6 +556,17 @@ static void processObject( Obj *obj, Scene *scene, mmap& materials )
 			tupleToVec(getColorField(child)), a,
 			b, c, tupleToVec(getField(child, "coneboundary")), tupleToVec(getField(child, "conedirection"))));
 	}
+	else if (name == "warn_light") {
+		if (child == NULL) {
+			throw ParseError("No info for warn_light");
+		}
+
+		scene->add(new WarnLight(scene,
+			tupleToVec(getField(child, "position")),
+			tupleToVec(getColorField(child)), getField(child, "constant_attenuation_coeff")->getScalar(),
+			getField(child, "linear_attenuation_coeff")->getScalar(), getField(child, "quadratic_attenuation_coeff")->getScalar(),
+			getField(child, "xflap")->getScalar(), getField(child, "yflap")->getScalar(), getField(child, "zflap")->getScalar()));
+	}
 
 	 else if (name == "ambient_light"){
 		if (child == NULL) {

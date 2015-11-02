@@ -3,7 +3,7 @@
 
 #include "scene.h"
 
-enum lighttype { DIRECTIONALLIGHT, POINTLIGHT, SPOTLIGHT, AMBIENTLIGHT, NUMOFTYPES };
+enum lighttype { DIRECTIONALLIGHT, POINTLIGHT, SPOTLIGHT, WARNLIGHT, AMBIENTLIGHT, NUMOFTYPES };
 
 class Light
 	: public SceneElement
@@ -81,6 +81,29 @@ protected:
 	double c;
 	vec3f coneboundray;
 	vec3f conedirection;
+};
+
+class WarnLight
+	: public Light
+{
+public:
+	WarnLight(Scene *scene, const vec3f& pos, const vec3f& color, double constant, double linear, double quad, double x, double y, double z)
+		: Light(scene, color), position(pos), a(constant), b(linear), c(quad), xflap(x), yflap(y), zflap(z){
+		type = WARNLIGHT;
+	}
+	virtual vec3f shadowAttenuation(const vec3f& P) const;
+	virtual double distanceAttenuation(const vec3f& P) const;
+	virtual vec3f getColor(const vec3f& P) const;
+	virtual vec3f getDirection(const vec3f& P) const;
+
+protected:
+	vec3f position;
+	double a;
+	double b;
+	double c;
+	double xflap = 1000;
+	double yflap = 1000;
+	double zflap = 1000;
 };
 
 

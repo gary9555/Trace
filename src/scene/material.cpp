@@ -23,6 +23,7 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 	//iteration in scene.lights
 
 
+
 	for (list<Light*>::const_iterator ii = scene->beginLights(); ii != scene->endLights(); ii++)
 	{
 		isect is;
