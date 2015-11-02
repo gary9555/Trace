@@ -45,7 +45,7 @@ class PointLight
 	: public Light
 {
 public:
-	PointLight( Scene *scene, const vec3f& pos, const vec3f& color, double constant, double linear, double quad)
+	PointLight( Scene *scene, const vec3f& pos, const vec3f& color, double constant=0, double linear=0, double quad=0)
 		: Light(scene, color), position(pos), a(constant), b(linear), c(quad){
 		type = POINTLIGHT;
 	}
