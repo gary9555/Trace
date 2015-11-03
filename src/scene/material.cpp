@@ -55,7 +55,9 @@ vec3f Material::shade(Scene *scene, const ray& r, const isect& i) const
 		vec3f ColorBeforeAttenuation = diffuse + specular;
 
 		//shadow attenuation
-		ColorBeforeAttenuation = prod(ColorBeforeAttenuation, (*ii)->shadowAttenuation(r.at(i.t)));
+		if (i.isdifference == false) {
+			ColorBeforeAttenuation = prod(ColorBeforeAttenuation, (*ii)->shadowAttenuation(r.at(i.t)));
+		}
 
 		//distance attenuation
 		double disatten = 1.0;

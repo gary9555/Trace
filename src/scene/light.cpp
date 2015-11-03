@@ -123,18 +123,48 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 
 vec3f SpotLight::shadowAttenuation(const vec3f& P) const
 {
-	isect i;
 	if (coneboundray*conedirection > -getDirection(P)*conedirection){ return vec3f(0.0, 0.0, 0.0); }
-	if (scene->intersect(ray(P, getDirection(P)), i)){ return vec3f(0.0, 0.0, 0.0); }
-	return vec3f(1, 1, 1);
+	vec3f dir = getDirection(P).normalize();
+	ray shadowRay = ray(P, dir);
+	isect i;
+	vec3f shadowatten(1.0, 1.0, 1.0);
+	bool intersectOtherObject = scene->intersect(shadowRay, i);
+	while (intersectOtherObject) {
+
+		if (i.getMaterial().kt == vec3f(0.0, 0.0, 0.0)){
+			return vec3f(0, 0, 0);
+		}
+		else{
+			shadowatten = prod(shadowatten, i.getMaterial().kt);
+		}
+		shadowRay = ray(shadowRay.at(i.t), dir);
+		intersectOtherObject = scene->intersect(shadowRay, i);
+	}
+
+	return shadowatten;
 }
 
 vec3f WarnLight::shadowAttenuation(const vec3f& P) const
 {
-	isect i;
 	if (P[0] - position[0] > xflap+RAY_EPSILON || P[0] - position[0] < -xflap-RAY_EPSILON){ return vec3f(0.0, 0.0, 0.0); }
 	if (P[1] - position[1] > yflap+RAY_EPSILON || P[1] - position[1] < -yflap-RAY_EPSILON){ return vec3f(0.0, 0.0, 0.0); }
 	if (P[2] - position[2] > zflap+RAY_EPSILON || P[2] - position[2] < -zflap-RAY_EPSILON){ return vec3f(0.0, 0.0, 0.0); }
-	if (scene->intersect(ray(P, getDirection(P)), i)){ return vec3f(0.0, 0.0, 0.0); }
-	return vec3f(1, 1, 1);
+	vec3f dir = getDirection(P).normalize();
+	ray shadowRay = ray(P, dir);
+	isect i;
+	vec3f shadowatten(1.0, 1.0, 1.0);
+	bool intersectOtherObject = scene->intersect(shadowRay, i);
+	while (intersectOtherObject) {
+
+		if (i.getMaterial().kt == vec3f(0.0, 0.0, 0.0)){
+			return vec3f(0, 0, 0);
+		}
+		else{
+			shadowatten = prod(shadowatten, i.getMaterial().kt);
+		}
+		shadowRay = ray(shadowRay.at(i.t), dir);
+		intersectOtherObject = scene->intersect(shadowRay, i);
+	}
+
+	return shadowatten;
 }

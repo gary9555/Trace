@@ -54,6 +54,8 @@ public:
     void setT( double tt ) { t = tt; }
     void setN( const vec3f& n ) { N = n; }
     void setMaterial( Material *m ) { delete material; material = m; }
+
+	bool isdifference = false; //should be changed only when dealing with csg !
         
     isect& operator =( const isect& other )
     {
@@ -62,6 +64,7 @@ public:
             obj = other.obj;
             t = other.t;
             N = other.N;
+			isdifference = other.isdifference;
 //            material = other.material ? new Material( *(other.material) ) : 0;
 			if( other.material )
             {

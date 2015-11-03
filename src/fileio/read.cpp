@@ -19,6 +19,7 @@
 #include "../SceneObjects/Cylinder.h"
 #include "../SceneObjects/Sphere.h"
 #include "../SceneObjects/Square.h"
+#include "../SceneObjects/csg.h"
 #include "../scene/light.h"
 
 typedef map<string,Material*> mmap;
@@ -297,8 +298,8 @@ static void processGeometry( string name, Obj *child, Scene *scene,
 		SceneObject *obj = NULL;
        	Material *mat;
         
-        //if( hasField( child, "material" ) )
-        mat = getMaterial(getField( child, "material" ), materials );
+        if( hasField( child, "material" ) )
+			mat = getMaterial(getField(child, "material"), materials);
         //else
         //    mat = new Material();
 
@@ -324,6 +325,24 @@ static void processGeometry( string name, Obj *child, Scene *scene,
 			obj = new Cone( scene, mat, height, bottom_radius, top_radius, capped );
 		} else if( name == "square" ) {
 			obj = new Square( scene, mat );
+		}
+
+		else if (name == "csg")
+		{
+			Box *b = NULL;
+			Cylinder *c = NULL;
+			Material *mat1 = getMaterial(getField(child, "boxmaterial"), materials);
+			b = new Box(scene, mat1);
+			
+			Material *mat2 = getMaterial(getField(child, "cylindermaterial"), materials);
+			c = new Cylinder(scene, mat2);
+			double csgoperator;
+			maybeExtractField(child, "csgoperator", csgoperator);
+			if (b && c)
+			{
+				Material *fakemat = NULL;
+				obj = new csg(scene, fakemat, b, c, csgoperator);
+			}
 		}
 
         obj->setTransform(transform);
