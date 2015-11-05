@@ -34,6 +34,7 @@ public:
 	Fl_Slider*			m_ambientSlider;
 	Fl_Slider*			m_intensitySlider;
 	Fl_Slider*			m_distSlider;
+	Fl_Slider*			m_threshSlider;
 
 
 	Fl_Button*			m_renderButton;
@@ -60,6 +61,7 @@ private:
 	double		m_nAmbient;
 	int			m_nIntensity;
 	double		m_nDist;
+	vec3f		m_nThresh;
 
 // static class members
 	static Fl_Menu_Item menuitems[];
@@ -81,6 +83,7 @@ private:
 	static void cb_ambientSlides(Fl_Widget* o, void* v);
 	static void cb_intensitySlides(Fl_Widget* o, void* v);
 	static void cb_distSlides(Fl_Widget* o, void* v);
+	static void cb_threshSlides(Fl_Widget* o, void* v);
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

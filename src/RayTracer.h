@@ -12,7 +12,7 @@ public:
     RayTracer();
     ~RayTracer();
 
-    vec3f	trace( Scene *scene, double x, double y );
+    vec3f	trace( Scene *scene, double x, double y, vec3f thresh );
 	vec3f	traceRay( Scene *scene, const ray& r, const vec3f& thresh, int depth );
 
 
@@ -20,7 +20,7 @@ public:
 	double	aspectRatio();
 	void	traceSetup( int w, int h );
 	void	traceLines( int start = 0, int stop = 10000000 );
-	void	tracePixel( int i, int j );
+	void	tracePixel( int i, int j, vec3f thresh );
 
 	bool	loadScene( char* fn );
 
@@ -36,6 +36,7 @@ private:
 
 	bool	m_bSceneLoaded;
 	int		m_nDepth;
+	vec3f	mythresh = vec3f(0.0, 0.0, 0.0);
 };
 
 #endif // __RAYTRACER_H__

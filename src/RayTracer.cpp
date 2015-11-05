@@ -16,11 +16,11 @@
 // through the projection plane, and out into the scene.  All we do is
 // enter the main ray-tracing method, getting things started by plugging
 // in an initial ray weight of (0.0,0.0,0.0) and an initial recursion depth of 0.
-vec3f RayTracer::trace( Scene *scene, double x, double y )
+vec3f RayTracer::trace( Scene *scene, double x, double y, vec3f thresh )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, vec3f(1.0,1.0,1.0), m_nDepth ).clamp();   // clamp(): clamps the value to go between (0,1)
+	return traceRay( scene, r, thresh, m_nDepth ).clamp();   // clamp(): clamps the value to go between (0,1)
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
@@ -69,8 +69,13 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		// clamp intensity to the threshold if exceeded
 		
-		if (depth == 0)
-			return intensity;
+		if (depth == 0) {
+			if (intensity[0] > thresh[0] || intensity[1] > thresh[1] || intensity[2] > thresh[2])
+			{
+				return intensity;
+			}
+			else { return vec3f(0.0, 0.0, 0.0); }
+		}
 
 		// dealing with reflection
 		vec3f L = -r.getDirection().normalize();
@@ -78,7 +83,10 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		if (NdotL > 0){
 			vec3f R = 2 * i.N.normalize() * (NdotL)-L;
 			vec3f I = traceRay(scene, ray(r.at(i.t), R), thresh, depth - 1);
-			intensity += prod(m.kr, I);
+			if (prod(m.kr, I)[0] > thresh[0] || prod(m.kr, I)[1] > thresh[1] || prod(m.kr, I)[2] > thresh[2])
+			{
+				intensity += prod(m.kr, I);
+			}
 		}
 
 
@@ -100,11 +108,16 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		if ((1 - n_r*n_r*(1 - NdotL*NdotL))>0){ // check if it is TIR
 			vec3f T = (n_r*(NdotI)-sqrt(1 - n_r*n_r*(1 - NdotI*NdotI)))*normal - n_r*I;
 			vec3f refractIntensity = traceRay(scene, ray(r.at(i.t), T.normalize()), thresh, depth - 1);
-			intensity += prod(m.kt, refractIntensity);
+			if (prod(m.kt, refractIntensity)[0] > thresh[0] || prod(m.kt, refractIntensity)[1] > thresh[1] || prod(m.kt, refractIntensity)[2] > thresh[2])
+			{
+				intensity += prod(m.kt, refractIntensity);
+			}
 		}
-
-
-		return intensity;
+		if (intensity[0] > thresh[0] || intensity[1] > thresh[1] || intensity[2] > thresh[2])
+		{
+			return intensity;
+		}
+		else return vec3f(0.0, 0.0, 0.0);
 	
 	} else {
 		// can implement texture background here
@@ -207,10 +220,10 @@ void RayTracer::traceLines( int start, int stop )
 
 	for( int j = start; j < stop; ++j )
 		for( int i = 0; i < buffer_width; ++i )
-			tracePixel(i,j);
+			tracePixel(i,j,mythresh);
 }
 
-void RayTracer::tracePixel( int i, int j )
+void RayTracer::tracePixel( int i, int j, vec3f thresh )
 {
 	vec3f col;
 
@@ -220,7 +233,7 @@ void RayTracer::tracePixel( int i, int j )
 	double x = double(i)/double(buffer_width);
 	double y = double(j)/double(buffer_height);
 
-	col = trace( scene,x,y );
+	col = trace( scene,x,y, thresh );
 
 	unsigned char *pixel = buffer + ( i + j * buffer_width ) * 3;
 
@@ -228,4 +241,6 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[0] = (int)( 255.0 * col[0]);
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
+
+	mythresh = thresh;
 }

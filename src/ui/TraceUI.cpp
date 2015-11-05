@@ -124,6 +124,11 @@ void TraceUI::cb_distSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nDist = double(((Fl_Slider *)o)->value());
 }
 
+void TraceUI::cb_threshSlides(Fl_Widget* o, void* v)
+{
+	((TraceUI*)(o->user_data()))->m_nThresh = vec3f(((Fl_Slider *)o)->value(), ((Fl_Slider *)o)->value(), ((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -174,7 +179,7 @@ void TraceUI::cb_render(Fl_Widget* o, void* v)
 					}
 				}
 
-				pUI->raytracer->tracePixel( x, y );
+				pUI->raytracer->tracePixel( x, y, pUI->m_nThresh );
 		
 			}
 			if (done) break;
@@ -351,17 +356,30 @@ TraceUI::TraceUI() {
 		m_intensitySlider->callback(cb_intensitySlides);
 
 		// install slider distance scale
-		m_ambientSlider = new Fl_Value_Slider(10, 205, 180, 20, "Distance Scale (Log 10)");
-		m_ambientSlider->user_data((void*)(this));	
-		m_ambientSlider->type(FL_HOR_NICE_SLIDER);
-		m_ambientSlider->labelfont(FL_COURIER);
-		m_ambientSlider->labelsize(12);
-		m_ambientSlider->minimum(-0.99);
-		m_ambientSlider->maximum(3.00);
-		m_ambientSlider->step(0.01);
-		m_ambientSlider->value(m_nDist);
-		m_ambientSlider->align(FL_ALIGN_RIGHT);
-		m_ambientSlider->callback(cb_distSlides);
+		m_distSlider = new Fl_Value_Slider(10, 205, 180, 20, "Distance Scale (Log 10)");
+		m_distSlider->user_data((void*)(this));	
+		m_distSlider->type(FL_HOR_NICE_SLIDER);
+		m_distSlider->labelfont(FL_COURIER);
+		m_distSlider->labelsize(12);
+		m_distSlider->minimum(-0.99);
+		m_distSlider->maximum(3.00);
+		m_distSlider->step(0.01);
+		m_distSlider->value(m_nDist);
+		m_distSlider->align(FL_ALIGN_RIGHT);
+		m_distSlider->callback(cb_distSlides);
+
+		// install sclider threshold 
+		m_threshSlider = new Fl_Value_Slider(10, 230, 180, 20, "Threshold Scale");
+		m_threshSlider->user_data((void*)(this));
+		m_threshSlider->type(FL_HOR_NICE_SLIDER);
+		m_threshSlider->labelfont(FL_COURIER);
+		m_threshSlider->labelsize(12);
+		m_threshSlider->minimum(0);
+		m_threshSlider->maximum(1.00);
+		m_threshSlider->step(0.01);
+		m_threshSlider->value(0);
+		m_threshSlider->align(FL_ALIGN_RIGHT);
+		m_threshSlider->callback(cb_threshSlides);
 
 		m_renderButton = new Fl_Button(240, 27, 70, 25, "&Render");
 		m_renderButton->user_data((void*)(this));
